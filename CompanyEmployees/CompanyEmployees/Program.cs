@@ -1,8 +1,10 @@
 using CompanyEmployees;
 using CompanyEmployees.Extensions;
+using CompanyEmployees.Migrations;
 using Contracts;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
+using Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureLoggerService();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<Database>();
 
 builder.Services.AddControllers()
 	.AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
@@ -35,5 +40,6 @@ app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
+app.MigrateDatabase();
 
 app.Run();
